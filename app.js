@@ -5,7 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
- var myusers = require("./routes/myusers");
+var session = require ('express-session');
+var myusers = require("./routes/myusers");
 const comments = require("./routes/comments");
 
 
@@ -20,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(session({secret: "secretCode123456", resave: false, saveUninitialized:true}))
 app.use('/', indexRouter)
 app.get('/allusers', myusers.getAllUsers);
 app.use('/users', usersRouter);
@@ -28,10 +29,12 @@ app.use('/users', usersRouter);
 app.use('/comments', comments);
 
 app.get('/oneuser/:id', myusers.getOne);
+app.get('/mainactivity', myusers.mainActivity);
 
 app.post('/adduser', myusers.addUser);
 
 app.post('/login', myusers.loginUser);
+app.get('/logout', myusers.logOutUser);
 
 app.delete('/deleteuser/:id', myusers.deleteUser);
 

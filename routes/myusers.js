@@ -13,7 +13,7 @@ var mongodbUri = 'mongodb://appdb:appdb123@ds141783.mlab.com:41783/appdb';
 router.getAllUsers = (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
-    aUser.find(function(err, myusers) {
+    aUser.find(function(err,  myusers) {
         if (err)
         {
             res.send('There are no users to view!!');
@@ -54,21 +54,26 @@ router.loginUser = (req, res ) =>
             console.log(err);
             return res.status(500).send();
 
-            //res.json({ message: 'Ufffffffffffff!', data: aUser });
 
         }
         if(!user)
         {
-            res.json({ message: 'User with them details does not Exist!', data: aUser });
-           // return res.status(404).send();
+            res.json({ message: 'Login Failed, User with them details does not Exist!', data: aUser });
+
         }
         else
         {
-            res.json({ message: 'User Found!', data: aUser });
-           // return res.status(200).send();
+            req.session.loggInUser = user;
+            res.json({ message: 'Logged in Successfully!', data: aUser });
         }
 
     });
+}
+
+router.logOutUser = (req, res) =>
+{
+    req.session.destroy();
+    return res.status(200).send('log Out Successful!!');
 }
 
 //add
@@ -92,7 +97,6 @@ router.loginUser = (req, res ) =>
                     {
                         res.json({ message: 'User was not added!' } );
                     }
-
                     else
                     {
                         res.json({ message: 'A new User was added!', data: aUser });
@@ -116,6 +120,21 @@ router.loginUser = (req, res ) =>
             }
         });
     }
+
+    router.mainActivity =  (req, res) =>
+        {
+            if(!req.session.loggInUser)
+            {
+                return res.status(401).send('You are not logged in!! Please login.');
+
+            }
+            else
+            {
+                return res.status(200).send('Welcome to the Main Activity page of the Web App.');
+            }
+
+        
+    };
 
 
 mongoose.connect(mongodbUri);
