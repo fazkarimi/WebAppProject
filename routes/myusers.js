@@ -2,7 +2,8 @@ let comments = require('../models/comments');
 let express = require('express');
 let router = express.Router();
 let mongoose = require('mongoose');
-let aUser = require('../models/myusers');
+var aUser = require('../models/myusers');
+let myusers = require('../models/myusers');
 
 var mongodbUri = 'mongodb://appdb:appdb123@ds141783.mlab.com:41783/appdb';
 
@@ -40,13 +41,34 @@ router.getOne = (req, res) => {
         }
         // return the donation
     });
+}
 
-   /* function getById(array, id) {
-        var usersReturned = array.filter(function (obj) {
-            return obj.id == id;
-        });
-        return usersReturned ? usersReturned[0] : null; // or undefined
-    }*/
+router.loginUser = (req, res ) =>
+{
+    var password = req.body.Password;
+    var email = req.body.Email;
+
+    myusers.findOne({Password: password, Email: email}, function (err, user) {
+        if(err)
+        {
+            console.log(err);
+            return res.status(500).send();
+
+            //res.json({ message: 'Ufffffffffffff!', data: aUser });
+
+        }
+        if(!user)
+        {
+            res.json({ message: 'User with them details does not Exist!', data: aUser });
+           // return res.status(404).send();
+        }
+        else
+        {
+            res.json({ message: 'User Found!', data: aUser });
+           // return res.status(200).send();
+        }
+
+    });
 }
 
 //add
